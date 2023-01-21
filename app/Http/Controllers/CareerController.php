@@ -46,14 +46,6 @@ class CareerController extends Controller
         ];
         $validator = Validator::make($request->all(), $rules);
 
-        // if ($validator->fails()) {
-        //     return $response['response'] = $validator->messages();
-        // }
-        // $request->validate([
-        //     'designation' => 'required',
-        //     'job_description' => 'required',
-        //     'experience' => 'required'
-        // ]);
         if($validator->fails()) {
             return Redirect::back()->withErrors($validator);
         }

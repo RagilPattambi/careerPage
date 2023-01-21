@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <p>Name : {{$application['name']}}</p>
                     <p>Designation : {{$application['designation']}}</p>
-                    <p>Experience : {{$application['experience']}}years</p>
+                    <p>Experience : {{$application['experience']}}year(s)</p>
                 </div>
                 <div class="card-footer">
                     <div>

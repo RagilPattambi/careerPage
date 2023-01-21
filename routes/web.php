@@ -25,8 +25,7 @@ Route::get('/login', [UserController::class, 'login'])
 Route::post('/user/authenticate', [UserController::class, 'authenticate']);
 Route::get('/logout', [UserController::class, 'logout'])
     ->middleware('auth');
-Route::post('apply', [ApplicationController::class, 'store'])
-->middleware('auth');
+Route::post('apply', [ApplicationController::class, 'store']);
 Route::get('application', [ApplicationController::class, 'index'])
 ->middleware('auth');
 Route::get('application/download/{id}', [ApplicationController::class, 'download'])

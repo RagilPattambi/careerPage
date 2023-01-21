@@ -1,7 +1,7 @@
 @extends('layout')
 @section('content')
 @if($errors->any())
-    <div class="bg-danger text-white p-2">{{ implode('', $errors->all(':message')) }}</div>
+<div class="bg-danger text-white p-2">{{ implode('', $errors->all(':message')) }}</div>
 @endif
 <div class="modal fade" id="createJob" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -10,7 +10,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Create Job</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/career/store" method="POST" enctype="multipart/form-data">
+            <form action="/career/store" method="POST" enctype="multipart/form-data" id="jobForm">
                 <div class="modal-body">
                     @csrf
                     <div class="form-group">
@@ -70,7 +70,7 @@
                         <h5 class="modal-title" id="exampleModalLabel">Apply Job</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="/apply" method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data" id="applicationForm">
                         <div class="modal-body">
                             @csrf
                             <div class="form-group">
@@ -92,7 +92,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button id="submit" type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </form>
                 </div>
@@ -101,4 +101,127 @@
         @endforeach
 
     </div>
+    <script>
+        if ($("#applicationForm").length > 0) {
+            $("#applicationForm").validate({
+                rules: {
+                    name: {
+                        required: true,
+                        maxlength: 50
+                    },
+                    designation: {
+                        required: true,
+                        maxlength: 50,
+                    },
+                    experience: {
+                        required: true,
+                        number: true
+                    },
+                    resume: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Please enter name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    designation: {
+                        required: "Please enter designation",
+                        maxlength: "The designation name should less than or equal to 50 characters",
+                    },
+                    experience: {
+                        required: "Please enter experience",
+                        number: "The experience should be digit."
+                    },
+                    resume: {
+                        required: "Please select a file to upload"
+                    }
+                },
+                submitHandler: function(form) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $('#submit').html('Please Wait...');
+                    $("#submit").attr("disabled", true);
+                    $.ajax({
+                        url: "/apply",
+                        type: "POST",
+                        data: $('#applicationForm').serialize(),
+                        success: function(response) {
+                            $('#submit').html('Submit');
+                            $("#submit").attr("disabled", false);
+                            Swal.fire('Application submitted successfully').then(function() {
+                                window.location.href = "/";
+                            });;
+                            document.getElementById("applicationForm").reset();
+                        }
+                    });
+                }
+            })
+        }
+
+        if ($("#jobForm").length > 0) {
+            $("#jobForm").validate({
+                rules: {
+                    job_description: {
+                        required: true,
+                        maxlength: 255
+                    },
+                    designation: {
+                        required: true,
+                        maxlength: 50,
+                    },
+                    experience: {
+                        required: true,
+                        number:true
+                    },
+                    expiry_date: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    job_description: {
+                        required: "Please enter job description",
+                        maxlength: "The description maxlength should be 255 characters long."
+                    },
+                    designation: {
+                        required: "Please enter designation",
+                        maxlength: "The designation name should less than or equal to 50 characters",
+                    },
+                    experience: {
+                        required: "Please enter experience",
+                        number: "The experience should be digit."
+                    },
+                    expiry_date: {
+                        required: "Please select a expiry date"
+                    }
+                },
+                submitHandler: function(form) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $('#submit').html('Please Wait...');
+                    $("#submit").attr("disabled", true);
+                    $.ajax({
+                        url: "/career/store",
+                        type: "POST",
+                        data: $('#jobForm').serialize(),
+                        success: function(response) {
+                            $('#submit').html('Submit');
+                            $("#submit").attr("disabled", false);
+                            Swal.fire('Job created successfully').then(function() {
+                                window.location.href = "/";
+                            });
+                            document.getElementById("jobForm").reset();
+                        }
+                    });
+                }
+            })
+        }
+    </script>
     @endsection

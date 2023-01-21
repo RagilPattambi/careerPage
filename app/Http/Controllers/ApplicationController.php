@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redirect;
 
 class ApplicationController extends Controller
 {
@@ -37,11 +39,16 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         //
-        // $formFields = $request->validate([
-        //     'designation' => 'required',
-        //     'name' => 'required',
-        //     'experience' => 'required'
-        // ]);
+        $rules = [
+            'designation' => 'required',
+            'name' => 'required',
+            'experience' => 'required'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if($validator->fails()) {
+            return Redirect::back()->withErrors($validator);
+        }
         $formFields = new Application;
         $formFields->designation = $request->designation;
         $formFields->name = $request->name;
